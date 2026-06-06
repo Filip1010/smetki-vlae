@@ -1,0 +1,139 @@
+.backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 300;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 380px;
+  max-width: 100vw;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 301;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.3);
+  animation: slideIn 0.25s ease;
+}
+
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slideUp   { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+@media (max-width: 540px) {
+  .panel {
+    top: auto;
+    left: 0; right: 0; bottom: 0;
+    width: 100%;
+    max-height: 88vh;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.35);
+    animation: slideUp 0.25s ease;
+  }
+}
+
+.header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+}
+
+.monthTitle { font-size: 1.25rem; margin-bottom: 0.25rem; }
+.yearSub { color: var(--text-secondary); font-size: 0.875rem; }
+
+.closeBtn {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.375rem;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  display: flex;
+  transition: all var(--transition);
+}
+.closeBtn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+
+.body { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+.totalCard {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  text-align: center;
+}
+.totalLabel { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.totalAmount { font-size: 2rem; font-weight: 700; color: var(--accent-gold); font-family: 'DM Sans', sans-serif; margin-top: 0.25rem; }
+
+.breakdown { display: flex; flex-direction: column; gap: 0.5rem; }
+.breakdownTitle { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 0.25rem; }
+
+.breakdownRow {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid;
+}
+
+.breakdownRow:nth-child(2) { border-color: #C8A951; }
+.breakdownRow:nth-child(3) { border-color: #4A9ECC; }
+.breakdownRow:nth-child(4) { border-color: #5BB85B; }
+.breakdownRow:nth-child(5) { border-color: #CC7A4A; }
+
+.catName { font-size: 0.875rem; color: var(--text-secondary); }
+.catValue { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+
+.statusRow {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.statusLabel { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+
+.notes {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  padding: 0.875rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.notesTitle { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 0.5rem; }
+
+.footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 0.75rem;
+}
+
+.editBtn {
+  flex: 1;
+  padding: 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem; font-weight: 600;
+  background: var(--accent-gold);
+  color: #0D1B3E;
+  transition: all var(--transition);
+}
+.editBtn:hover { background: var(--accent-gold-lt); }
+
+.deleteBtn {
+  flex: 1;
+  padding: 0.625rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem; font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  transition: all var(--transition);
+}
+.deleteBtn:hover { background: var(--danger-bg); }
