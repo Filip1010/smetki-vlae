@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useGoogleSheets } from '../../context/GoogleSheetsContext';
 import { useSettings } from '../../context/SettingsContext';
 import { HOUSES, getHouse } from '../../data/houses';
+import GmailSyncButton from '../GmailSync/GmailSyncButton';
 import styles from './Layout.module.css';
 
 const NAV_ITEMS = [
@@ -62,7 +63,7 @@ export default function Layout({ children }: Props) {
   const [houseDropOpen, setHouseDropOpen] = useState(false);
   const brandRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const { isConfigured, isConnected, syncStatus } = useGoogleSheets();
+  const { isConfigured, isConnected, syncStatus, disconnect } = useGoogleSheets();
   const { settings, setActiveHouseId } = useSettings();
 
   const activeHouse = getHouse(settings.activeHouseId);
@@ -150,6 +151,15 @@ export default function Layout({ children }: Props) {
               <span className={styles.navLabel}>{item.label}</span>
             </NavLink>
           ))}
+          <div className={styles.navDivider} aria-hidden="true" />
+          <button className={styles.logoutBtn} onClick={disconnect} title="Одјави се">
+            <svg className={styles.navIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span className={styles.navLabel}>Одјави</span>
+          </button>
         </nav>
 
         <div className={styles.sidebarFooter}>
@@ -176,6 +186,7 @@ export default function Layout({ children }: Props) {
               <span className={styles.syncLabel}>{isConnected ? (syncStatus === 'syncing' ? 'Синхронизира…' : 'Sheets') : 'Одврзано'}</span>
             </div>
           )}
+          <GmailSyncButton />
         </header>
         <main className={styles.content}>
           {children}

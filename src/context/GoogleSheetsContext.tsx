@@ -6,7 +6,10 @@ import { UnauthorizedError, billsHash, mergeSheetIntoBills, resetTabCache, readB
 import type { Bill } from '../types/bill';
 
 const CLIENT_ID = (import.meta as { env: Record<string, string> }).env.VITE_GOOGLE_CLIENT_ID as string | undefined;
-const SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
+const SCOPE = [
+  'https://www.googleapis.com/auth/spreadsheets',
+  'https://www.googleapis.com/auth/gmail.readonly',
+].join(' ');
 const POLL_MS = 10_000;
 
 export type SyncStatus = 'idle' | 'syncing' | 'error';
@@ -14,6 +17,7 @@ export type SyncStatus = 'idle' | 'syncing' | 'error';
 export interface GoogleSheetsContextValue {
   isConfigured: boolean;
   isConnected: boolean;
+  accessToken: string | null;
   syncStatus: SyncStatus;
   lastSynced: Date | null;
   syncError: string | null;
@@ -202,7 +206,9 @@ export function GoogleSheetsProvider({ children }: { children: React.ReactNode }
   }, [startPolling]);
 
   const connect = useCallback(() => {
-    tokenClientRef.current?.requestAccessToken({ prompt: '' });
+    // prompt:'consent' forces Google to show the full permission screen every time,
+    // which is required whenever a new scope (gmail.readonly) is being added.
+    tokenClientRef.current?.requestAccessToken({ prompt: 'consent' });
   }, []);
 
   const disconnect = useCallback(() => handleDisconnect(), [handleDisconnect]);
@@ -230,6 +236,7 @@ export function GoogleSheetsProvider({ children }: { children: React.ReactNode }
     <GoogleSheetsContext.Provider value={{
       isConfigured: !!CLIENT_ID,
       isConnected,
+      accessToken: tokenRef.current,
       syncStatus,
       lastSynced,
       syncError,

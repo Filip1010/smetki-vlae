@@ -24,3 +24,18 @@ export interface BillFilters {
 
 export type BillSortKey = 'month' | 'total' | 'evn' | 'virtuseElias' | 'vodovod' | 'internetTv' | 'a1';
 export type SortDirection = 'asc' | 'desc';
+
+export type GmailBillProvider = 'A1' | 'EVN' | 'Vodovod' | 'Virtus';
+
+export interface GmailBill {
+  id: string;
+  provider: GmailBillProvider;
+  houseId: 'vlae' | 'resen';
+  month: string;          // "MM/YYYY"
+  amount: number;         // MKD, always > 0
+  dueDate: string;        // "YYYY-MM-DD"
+  invoiceNumber: string | null;
+  gmailMessageId: string;
+  fetchedAt: string;      // ISO timestamp
+  status: 'unpaid';       // always on insert; toggled manually in UI
+}

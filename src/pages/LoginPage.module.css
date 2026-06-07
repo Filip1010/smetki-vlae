@@ -1,0 +1,265 @@
+/* ─── Page shell ─── */
+.page {
+  min-height: 100vh;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: #08111F;
+  background-image:
+    radial-gradient(ellipse 70% 55% at 12% 38%, rgba(212, 168, 75, 0.13) 0%, transparent 62%),
+    radial-gradient(ellipse 55% 65% at 88% 70%, rgba(212, 168, 75, 0.07) 0%, transparent 58%),
+    radial-gradient(ellipse 40% 40% at 55% 10%, rgba(28, 46, 86, 0.6) 0%, transparent 55%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle grid lines */
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30, 49, 96, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 49, 96, 0.22) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+}
+
+/* grain texture overlay */
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  pointer-events: none;
+}
+
+/* ─── Card ─── */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(13, 22, 46, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 168, 75, 0.22);
+  border-radius: 24px;
+  box-shadow:
+    0 0 0 1px rgba(212, 168, 75, 0.06),
+    0 32px 72px rgba(0, 0, 0, 0.6),
+    0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 3.25rem 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: slideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* top gold shimmer line */
+.cardGlow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 168, 75, 0.75), transparent);
+  border-radius: 999px;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Logo ─── */
+.logoWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(212, 168, 75, 0.18) 0%, rgba(212, 168, 75, 0.06) 100%);
+  border: 1px solid rgba(212, 168, 75, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(212, 168, 75, 0.15);
+}
+
+.logoIcon {
+  width: 38px;
+  height: 38px;
+  color: #D4A84B;
+}
+
+/* ─── Title block ─── */
+.titleBlock {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #EEF2FF;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #7B9AC8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── Ornamental divider ─── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 1.35rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 168, 75, 0.25), transparent);
+}
+
+.dividerDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(212, 168, 75, 0.5);
+  flex-shrink: 0;
+}
+
+/* ─── Feature list ─── */
+.features {
+  list-style: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 2rem;
+}
+
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  color: #7B9AC8;
+  line-height: 1.4;
+}
+
+.featureDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #D4A84B;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* ─── Google button ─── */
+.googleBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.5rem;
+  background: #ffffff;
+  color: #3c4043;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1.25rem;
+}
+
+.googleBtn:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  background: #f8f9fa;
+}
+
+.googleBtn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  background: #f1f3f4;
+}
+
+.googleBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.googleLogo {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ─── Config error ─── */
+.configError {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: #D97070;
+  margin-bottom: 1rem;
+}
+
+/* ─── Privacy note ─── */
+.privacy {
+  font-size: 0.72rem;
+  color: rgba(123, 154, 200, 0.55);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+/* ─── Tablet ─── */
+@media (max-width: 768px) {
+  .card { max-width: 440px; padding: 2.5rem 2.25rem 2rem; }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 540px) {
+  .page { padding: 1.25rem; align-items: center; justify-content: center; }
+  .card { padding: 2.25rem 1.75rem 1.75rem; border-radius: 18px; }
+  .title { font-size: 2rem; }
+  .logoWrap { width: 60px; height: 60px; border-radius: 16px; margin-bottom: 1.25rem; }
+  .logoIcon { width: 32px; height: 32px; }
+  .googleBtn { font-size: 0.95rem; }
+}
+
+@media (max-width: 380px) {
+  .page { padding: 1rem; }
+  .card { padding: 1.75rem 1.25rem 1.5rem; border-radius: 16px; }
+  .title { font-size: 1.75rem; }
+  .features { gap: 0.4rem; }
+  .features li { font-size: 0.78rem; }
+  .logoWrap { width: 52px; height: 52px; }
+  .logoIcon { width: 28px; height: 28px; }
+}

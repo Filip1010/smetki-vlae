@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
@@ -5,6 +6,16 @@ import {
 import { useBillsContext } from '../context/BillsContext';
 import { useSettings } from '../context/SettingsContext';
 import { useHouse } from '../hooks/useHouse';
+
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => window.innerWidth <= 640);
+  useEffect(() => {
+    const handler = () => setMobile(window.innerWidth <= 640);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return mobile;
+}
 import {
   getMonthlyTrend, getCategoryTotals, getYearlyTotals,
   getHighestBill, getUnpaidTotal, getAverageMonthly,
@@ -38,6 +49,7 @@ export default function DashboardPage() {
   const house = useHouse();
   const cats = house.categories;
   const lang = settings.monthsLang;
+  const isMobile = useIsMobile();
 
   const totalAll = bills.reduce((s, b) => s + b.total, 0);
   const currentYear = new Date().getFullYear();
@@ -118,8 +130,8 @@ export default function DashboardPage() {
       <div className={styles.chartsGrid}>
         <div className={styles.card}>
           <div className={styles.cardTitle}>Месечен тренд — Вкупно</div>
-          <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={monthlyTrend} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={isMobile ? 300 : 260}>
+            <AreaChart data={monthlyTrend} margin={{ top: 5, right: 10, left: 10, bottom: isMobile ? 48 : 5 }}>
               <defs>
                 <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#C8A951" stopOpacity={0.3} />
@@ -127,7 +139,16 @@ export default function DashboardPage() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-              <XAxis dataKey="label" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickLine={false} axisLine={false} interval={2} />
+              <XAxis
+                dataKey="label"
+                tick={{ fill: 'var(--text-secondary)', fontSize: isMobile ? 10 : 11 }}
+                tickLine={false}
+                axisLine={false}
+                interval={isMobile ? 1 : 2}
+                angle={isMobile ? -45 : 0}
+                textAnchor={isMobile ? 'end' : 'middle'}
+                height={isMobile ? 60 : 30}
+              />
               <YAxis tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
               <Tooltip content={<MKDTooltip />} />
               <Area type="monotone" dataKey="total" name="Вкупно" stroke="#C8A951" fill="url(#gradTotal)" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />

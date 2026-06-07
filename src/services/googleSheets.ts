@@ -203,15 +203,46 @@ export async function readBillsFromSheet(token: string, tab: string): Promise<Sh
     .filter((b) => b.month > 0 && b.year > 0);
 }
 
+function dedupeSheetRows(rows: SheetRow[]): SheetRow[] {
+  const map = new Map<string, SheetRow>();
+  for (const row of rows) {
+    const key = `${row.year}-${row.month}`;
+    const ex = map.get(key);
+    if (!ex) { map.set(key, { ...row }); continue; }
+    const ve = Math.max(ex.virtuseElias, row.virtuseElias);
+    const evn = Math.max(ex.evn, row.evn);
+    const vod = Math.max(ex.vodovod, row.vodovod);
+    const itv = Math.max(ex.internetTv, row.internetTv);
+    const a1  = Math.max(ex.a1,  row.a1);
+    map.set(key, {
+      ...ex,
+      virtuseElias: ve, evn, vodovod: vod, internetTv: itv, a1,
+      total: ve + evn + vod + itv + a1,
+      status: ex.status === 'paid' || row.status === 'paid' ? 'paid' : 'unpaid',
+      notes: [ex.notes, row.notes].filter(Boolean).join(' ').trim() || undefined,
+    });
+  }
+  return [...map.values()];
+}
+
 export function mergeSheetIntoBills(sheetRows: SheetRow[], localBills: Bill[]): Bill[] {
+  const deduped = dedupeSheetRows(sheetRows);
   const localMap = new Map(localBills.map((b) => [`${b.year}-${b.month}`, b]));
+  const sheetKeys = new Set(deduped.map((r) => `${r.year}-${r.month}`));
   const now = new Date().toISOString();
-  return sheetRows.map((row) => {
+
+  // Bills that exist in the sheet (update local with sheet values, or create new)
+  const fromSheet = deduped.map((row) => {
     const existing = localMap.get(`${row.year}-${row.month}`);
     return existing
       ? { ...existing, ...row, updatedAt: now }
       : { ...row, id: crypto.randomUUID(), createdAt: now, updatedAt: now };
   });
+
+  // Local-only bills (not in sheet) — always keep them, never drop
+  const localOnly = localBills.filter((b) => !sheetKeys.has(`${b.year}-${b.month}`));
+
+  return [...fromSheet, ...localOnly];
 }
 
 export async function writeBillsToSheet(
@@ -226,7 +257,25 @@ export async function writeBillsToSheet(
   });
   await checkResponse(clearResp);
 
-  const sorted = [...bills].sort((a, b) => a.year - b.year || a.month - b.month);
+  // Deduplicate by month-year before writing — prevents duplicate rows in the sheet
+  const billMap = new Map<string, Bill>();
+  for (const b of bills) {
+    const key = `${b.year}-${b.month}`;
+    const ex = billMap.get(key);
+    if (!ex) { billMap.set(key, b); continue; }
+    const ve = Math.max(ex.virtuseElias, b.virtuseElias);
+    const evn = Math.max(ex.evn, b.evn);
+    const vod = Math.max(ex.vodovod, b.vodovod);
+    const itv = Math.max(ex.internetTv, b.internetTv);
+    const a1  = Math.max(ex.a1, b.a1);
+    billMap.set(key, {
+      ...ex,
+      virtuseElias: ve, evn, vodovod: vod, internetTv: itv, a1,
+      total: ve + evn + vod + itv + a1,
+      status: ex.status === 'paid' || b.status === 'paid' ? 'paid' : 'unpaid',
+    });
+  }
+  const sorted = [...billMap.values()].sort((a, b) => a.year - b.year || a.month - b.month);
   const values = [
     buildHeaders(categories),
     ...sorted.map((b) => [

@@ -3,6 +3,7 @@ import type { Bill } from '../types/bill';
 import { computeTotal } from '../utils/calculations';
 import { useSettings } from '../context/SettingsContext';
 import { getHouse } from '../data/houses';
+import { GMAIL_UPDATE_EVENT, deduplicateAllBills } from '../lib/billMerger';
 
 const MK_MONTHS = [
   'Јануари','Февруари','Март','Април','Мај','Јуни',
@@ -13,7 +14,7 @@ function loadFromKey(key: string): Bill[] {
   try {
     const raw = localStorage.getItem(key);
     const bills = raw ? (JSON.parse(raw) as Bill[]) : [];
-    return bills.map((b) => ({ a1: 0, ...b }));
+    return bills.map((b) => ({ ...b, a1: b.a1 ?? 0 }));
   } catch {
     return [];
   }
@@ -28,7 +29,10 @@ export function useBills() {
   const storageKey = getHouse(settings.activeHouseId).storageKey;
   const storageKeyRef = useRef(storageKey);
 
-  const [bills, setBills] = useState<Bill[]>(() => loadFromKey(storageKey));
+  const [bills, setBills] = useState<Bill[]>(() => {
+    deduplicateAllBills();
+    return loadFromKey(storageKey);
+  });
 
   // Reload bills when house changes
   useEffect(() => {
@@ -36,6 +40,13 @@ export function useBills() {
     storageKeyRef.current = storageKey;
     setBills(loadFromKey(storageKey));
   }, [storageKey]);
+
+  // Reload bills when the Gmail fetcher writes new data to localStorage
+  useEffect(() => {
+    const handler = () => setBills(loadFromKey(storageKeyRef.current));
+    window.addEventListener(GMAIL_UPDATE_EVENT, handler);
+    return () => window.removeEventListener(GMAIL_UPDATE_EVENT, handler);
+  }, []);
 
   const persist = useCallback((updated: Bill[]) => {
     setBills(updated);

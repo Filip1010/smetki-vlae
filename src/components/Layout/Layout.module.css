@@ -150,6 +150,43 @@
 
 .navLabel { overflow: hidden; }
 
+.navDivider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.5rem 1rem 0.25rem;
+  opacity: 0.6;
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  margin: 0 0.5rem 0.25rem;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+  width: calc(100% - 1rem);
+  text-align: left;
+}
+
+.logoutBtn:hover {
+  background: rgba(217, 112, 112, 0.1);
+  color: #D97070;
+}
+
+.logoutBtn:active {
+  background: rgba(217, 112, 112, 0.18);
+}
+
 .sidebarFooter {
   padding: 0.75rem;
   border-top: 1px solid var(--border);
@@ -256,6 +293,8 @@
   .main { margin-left: 60px; }
   .mainCollapsed { margin-left: 60px; }
   .navLabel, .brandText, .collapseBtn span, .dropChevron { display: none; }
+  .logoutBtn { justify-content: center; padding: 0.6rem; }
+  .navDivider { margin: 0.5rem 0.5rem 0.25rem; }
   .collapseBtn { justify-content: center; }
   .houseDropdown { left: 60px; right: auto; width: 180px; top: 0; }
 }
@@ -280,6 +319,8 @@
   .brandText { display: block; }
   .dropChevron { display: flex; }
   .content { padding: 1rem 0.875rem; }
+  .logoutBtn { justify-content: flex-start; padding: 0.6rem 1rem; }
+  .navDivider { margin: 0.5rem 1rem 0.25rem; }
 
   /* reset dropdown to sit below brand inside the sidebar */
   .houseDropdown { left: 0; right: 0; width: auto; top: calc(100% + 4px); }
