@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { Bill } from '../../types/bill';
 import { MACEDONIAN_MONTHS, formatMKD } from '../../utils/formatters';
+import { getRoommateShare } from '../../utils/calculations';
 import StatusBadge from '../StatusBadge/StatusBadge';
 import { useHouse } from '../../hooks/useHouse';
 import styles from './BillDetail.module.css';
@@ -65,6 +66,21 @@ export default function BillDetail({ bill, onClose, onEdit, onDelete, onToggleSt
               </div>
             ))}
           </div>
+
+          {house.roommate && (
+            <div className={styles.roommateCard}>
+              <div className={styles.roommateHead}>
+                <span className={styles.roommateLabel}>Цимер · {house.roommate.name}</span>
+                <span className={styles.roommateAmount}>
+                  {formatMKD(getRoommateShare(bill.total, house.roommate.rent))}
+                </span>
+              </div>
+              <div className={styles.roommateCalc}>
+                Половина од сметките ({formatMKD(Math.round(bill.total / 2))})
+                {' + '}кирија ({formatMKD(house.roommate.rent)})
+              </div>
+            </div>
+          )}
 
           <div className={styles.statusRow}>
             <span className={styles.statusLabel}>Статус</span>

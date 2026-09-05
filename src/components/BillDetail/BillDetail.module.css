@@ -137,3 +137,36 @@
   transition: all var(--transition);
 }
 .deleteBtn:hover { background: var(--danger-bg); }
+
+/* Roommate share — money coming in, so it reads in the "paid" green
+   rather than the gold used for what the household owes. */
+.roommateCard {
+  background: var(--status-paid-bg);
+  border: 1px solid var(--status-paid-border);
+  border-left: 3px solid var(--status-paid);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.875rem;
+}
+
+.roommateHead {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+}
+
+.roommateLabel {
+  font-size: 0.75rem; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+}
+
+.roommateAmount {
+  font-size: 1.125rem; font-weight: 700;
+  color: var(--status-paid);
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+
+.roommateCalc {
+  margin-top: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

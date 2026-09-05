@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GmailClient, getBodyText, getAttachments, getSubject } from '../lib/gmail';
+import { GmailClient, getBodyText, getAttachments, getSubject, getMessageDate } from '../lib/gmail';
 import { parseByLabel } from '../lib/parsers';
 import type { LabelName } from '../lib/parsers';
 import { mergeGmailBill } from '../lib/billMerger';
@@ -41,13 +41,20 @@ export function useFetchBills(accessToken: string | null) {
         for (const msg of messages) {
           try {
             const detail = await gmail.getMessage(msg.id);
+            const subject = getSubject(detail);
             const bill = await parseByLabel(
               label, getBodyText(detail), msg.id,
-              getSubject(detail), getAttachments(detail), gmail,
+              subject, getAttachments(detail), gmail, getMessageDate(detail),
             );
-            if (!bill) { skipped++; continue; }
+            if (!bill) {
+              console.warn(`[${label}] could not parse "${subject}"`);
+              skipped++; continue;
+            }
             if (mergeGmailBill(bill)) inserted++; else skipped++;
-          } catch { skipped++; }
+          } catch (err) {
+            console.warn(`[${label}] message ${msg.id} threw during parse`, err);
+            skipped++;
+          }
         }
       }
       setResult({ inserted, skipped });

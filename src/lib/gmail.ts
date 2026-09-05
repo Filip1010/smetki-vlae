@@ -17,6 +17,7 @@ export interface GmailMessagePart {
 export interface GmailMessageDetail {
   id: string;
   labelIds: string[];
+  internalDate?: string;   // epoch millis, as a string
   payload: GmailMessagePart;
 }
 
@@ -124,6 +125,12 @@ export function getAttachments(
   }
   walk(message.payload);
   return result;
+}
+
+/** Date the message was received. Falls back to "now" when Gmail omits it. */
+export function getMessageDate(message: GmailMessageDetail): Date {
+  const ms = Number(message.internalDate);
+  return Number.isFinite(ms) && ms > 0 ? new Date(ms) : new Date();
 }
 
 export function getSubject(message: GmailMessageDetail): string {

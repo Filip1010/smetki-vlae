@@ -225,6 +225,8 @@ function dedupeSheetRows(rows: SheetRow[]): SheetRow[] {
   return [...map.values()];
 }
 
+const AMOUNT_FIELDS = ['virtuseElias', 'evn', 'vodovod', 'internetTv', 'a1'] as const;
+
 export function mergeSheetIntoBills(sheetRows: SheetRow[], localBills: Bill[]): Bill[] {
   const deduped = dedupeSheetRows(sheetRows);
   const localMap = new Map(localBills.map((b) => [`${b.year}-${b.month}`, b]));
@@ -234,9 +236,17 @@ export function mergeSheetIntoBills(sheetRows: SheetRow[], localBills: Bill[]): 
   // Bills that exist in the sheet (update local with sheet values, or create new)
   const fromSheet = deduped.map((row) => {
     const existing = localMap.get(`${row.year}-${row.month}`);
-    return existing
-      ? { ...existing, ...row, updatedAt: now }
-      : { ...row, id: crypto.randomUUID(), createdAt: now, updatedAt: now };
+    if (!existing) return { ...row, id: crypto.randomUUID(), createdAt: now, updatedAt: now };
+
+    // An empty amount cell reads back as 0, which means "nothing recorded yet",
+    // not "this category costs nothing". Letting it win would wipe an amount the
+    // Gmail import had just written locally — the next push re-uploads it instead.
+    const merged: Bill = { ...existing, ...row, updatedAt: now };
+    for (const field of AMOUNT_FIELDS) {
+      if (row[field] === 0 && existing[field] > 0) merged[field] = existing[field];
+    }
+    merged.total = merged.virtuseElias + merged.evn + merged.vodovod + merged.internetTv + merged.a1;
+    return merged;
   });
 
   // Local-only bills (not in sheet) — always keep them, never drop

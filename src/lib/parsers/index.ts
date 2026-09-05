@@ -19,8 +19,9 @@ export async function parseByLabel(
   body: string,
   messageId: string,
   subject: string,
-  attachments: { id: string; mimeType: string }[],
+  attachments: { id: string; mimeType: string; filename?: string }[],
   gmail: GmailClient,
+  messageDate: Date = new Date(),
 ): Promise<GmailBill | null> {
   switch (label) {
     case 'A1':            return parseA1(body, messageId);
@@ -29,7 +30,7 @@ export async function parseByLabel(
       // The label also receives payment-confirmation emails — skip those.
       if (!subject.includes('Достава на сметка')) return null;
       return parseVodovod(body, messageId);
-    case 'Smetki Virtus': return parseVirtus(messageId, subject, attachments, gmail);
+    case 'Smetki Virtus': return parseVirtus(messageId, subject, attachments, gmail, body, messageDate);
     default:              return null;
   }
 }

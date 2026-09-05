@@ -90,3 +90,11 @@ export const getMonthlyComparison = (bills: Bill[]) => {
     return row;
   });
 };
+
+/**
+ * What the roommate owes for a month: half of that month's bills plus their
+ * fixed rent contribution. Rounded to whole denars — bills are never split
+ * into fractions of a denar in practice.
+ */
+export const getRoommateShare = (total: number, rent: number): number =>
+  Math.round(total / 2) + rent;

@@ -62,9 +62,6 @@ function saveBills(storageKey: string, bills: Bill[]) {
 export function mergeGmailBill(gmailBill: GmailBill, forceInsert = false): boolean {
   if (!gmailBill.month) return false;
 
-  const processedIds = loadProcessedIds();
-  if (!forceInsert && processedIds.has(gmailBill.gmailMessageId)) return false;
-
   const parts = gmailBill.month.split('/');
   const month = parseInt(parts[0], 10);
   const year = parseInt(parts[1], 10);
@@ -76,6 +73,14 @@ export function mergeGmailBill(gmailBill: GmailBill, forceInsert = false): boole
   const now = new Date().toISOString();
 
   const idx = forceInsert ? -1 : bills.findIndex((b) => b.month === month && b.year === year);
+
+  // A message seen before is normally skipped. The exception is a month whose
+  // amount for this provider is missing again — a sheet round-trip can blank it
+  // out — in which case re-apply it. A month with no record at all was deleted
+  // on purpose, so leave it deleted.
+  if (!forceInsert && loadProcessedIds().has(gmailBill.gmailMessageId)) {
+    if (idx < 0 || bills[idx][field] > 0) return false;
+  }
 
   if (idx >= 0) {
     const updated = { ...bills[idx], [field]: gmailBill.amount, updatedAt: now };
